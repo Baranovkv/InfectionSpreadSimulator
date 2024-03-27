@@ -8,17 +8,23 @@
 
 /* Begin PBXBuildFile section */
 		DE0860BE2BB23F0A003A7FF1 /* InfectionSpreadSimulatorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE0860BD2BB23F0A003A7FF1 /* InfectionSpreadSimulatorApp.swift */; };
-		DE0860C02BB23F0A003A7FF1 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE0860BF2BB23F0A003A7FF1 /* ContentView.swift */; };
+		DE0860C02BB23F0A003A7FF1 /* ParametersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE0860BF2BB23F0A003A7FF1 /* ParametersView.swift */; };
 		DE0860C22BB23F0C003A7FF1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DE0860C12BB23F0C003A7FF1 /* Assets.xcassets */; };
 		DE0860C52BB23F0C003A7FF1 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DE0860C42BB23F0C003A7FF1 /* Preview Assets.xcassets */; };
+		DEF451632BB2DF62005795E2 /* SimulationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEF451622BB2DF62005795E2 /* SimulationView.swift */; };
+		DEF451652BB2DF99005795E2 /* InfectionSpread.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEF451642BB2DF99005795E2 /* InfectionSpread.swift */; };
+		DEF451672BB415A3005795E2 /* Person.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEF451662BB415A3005795E2 /* Person.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		DE0860BA2BB23F0A003A7FF1 /* InfectionSpreadSimulator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InfectionSpreadSimulator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE0860BD2BB23F0A003A7FF1 /* InfectionSpreadSimulatorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfectionSpreadSimulatorApp.swift; sourceTree = "<group>"; };
-		DE0860BF2BB23F0A003A7FF1 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		DE0860BF2BB23F0A003A7FF1 /* ParametersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParametersView.swift; sourceTree = "<group>"; };
 		DE0860C12BB23F0C003A7FF1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DE0860C42BB23F0C003A7FF1 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		DEF451622BB2DF62005795E2 /* SimulationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulationView.swift; sourceTree = "<group>"; };
+		DEF451642BB2DF99005795E2 /* InfectionSpread.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfectionSpread.swift; sourceTree = "<group>"; };
+		DEF451662BB415A3005795E2 /* Person.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Person.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,7 +58,9 @@
 			isa = PBXGroup;
 			children = (
 				DE0860BD2BB23F0A003A7FF1 /* InfectionSpreadSimulatorApp.swift */,
-				DE0860BF2BB23F0A003A7FF1 /* ContentView.swift */,
+				DE0860D22BB2DE77003A7FF1 /* Views */,
+				DE0860D32BB2DE82003A7FF1 /* ViewModels */,
+				DE0860D12BB2DE71003A7FF1 /* Models */,
 				DE0860C12BB23F0C003A7FF1 /* Assets.xcassets */,
 				DE0860C32BB23F0C003A7FF1 /* Preview Content */,
 			);
@@ -65,6 +73,31 @@
 				DE0860C42BB23F0C003A7FF1 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		DE0860D12BB2DE71003A7FF1 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				DEF451662BB415A3005795E2 /* Person.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		DE0860D22BB2DE77003A7FF1 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				DE0860BF2BB23F0A003A7FF1 /* ParametersView.swift */,
+				DEF451622BB2DF62005795E2 /* SimulationView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		DE0860D32BB2DE82003A7FF1 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				DEF451642BB2DF99005795E2 /* InfectionSpread.swift */,
+			);
+			path = ViewModels;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -137,7 +170,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DE0860C02BB23F0A003A7FF1 /* ContentView.swift in Sources */,
+				DEF451672BB415A3005795E2 /* Person.swift in Sources */,
+				DE0860C02BB23F0A003A7FF1 /* ParametersView.swift in Sources */,
+				DEF451632BB2DF62005795E2 /* SimulationView.swift in Sources */,
+				DEF451652BB2DF99005795E2 /* InfectionSpread.swift in Sources */,
 				DE0860BE2BB23F0A003A7FF1 /* InfectionSpreadSimulatorApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
