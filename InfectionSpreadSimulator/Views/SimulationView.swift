@@ -36,19 +36,20 @@ struct SimulationView: View {
 						
 					}
 				}
-			}
-			.scaleEffect(currentZoom + totalZoom)
+				.scaleEffect(currentZoom + totalZoom)
+				.simultaneousGesture(MagnifyGesture()
+						.onChanged { value in
+							currentZoom = value.magnification - 1
+						}
+						.onEnded { value in
+							totalZoom += currentZoom
+							currentZoom = 0
+						})
+				
 
-			.simultaneousGesture(MagnifyGesture()
-					.onChanged { value in
-						currentZoom = value.magnification - 1
-					}
-					.onEnded { value in
-						totalZoom += currentZoom
-						currentZoom = 0
-					})
-			
-			VStack {
+			}
+
+						VStack {
 				HStack{
 					VStack {
 						Button("Close") {
