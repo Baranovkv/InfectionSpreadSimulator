@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SimulationView: View {
-	
+	@Environment (\.dismiss) var dismiss
 	@State private var currentZoom = 0.0
 	@State private var totalZoom = 1.0
 	
@@ -29,7 +29,7 @@ struct SimulationView: View {
 						} label: {
 							Circle()
 								.frame(width: 20, height: 20)
-								.foregroundStyle(person.isSick ? .red : .green)
+								.foregroundStyle(person.isSick ? .red : person.infectedReminder > 0 ? .green : .cyan)
 								.animation(.bouncy, value: person.isSick)
 						}
 						.buttonStyle(.plain)
@@ -49,18 +49,34 @@ struct SimulationView: View {
 					})
 			
 			VStack {
-				VStack {
-					Text("Размер группы: \(infectionSpread.people.count)")
-					Text("Заразность болезни: \(infectionSpread.infectionFactor)")
-					Text("Частота заболевания: \(infectionSpread.infectionFrequency)")
+				HStack{
+					VStack {
+						Button("Close") {
+							dismiss()
+						}
+						.buttonStyle(.borderedProminent)
+						Spacer()
+					}
+					Spacer()
+					VStack {
+						VStack {
+							Text("Размер группы: \(infectionSpread.people.count)")
+							Text("Заразность болезни: \(infectionSpread.infectionFactor)")
+							Text("Частота заболевания: \(infectionSpread.infectionFrequency)")
+							Text("Заболевания: \(infectionSpread.infectedPeople.count)")
+							Text("Активные больные: \(infectionSpread.infectedPeopleActive.count)")
+						}
+						.padding()
+						.background {
+							RoundedRectangle(cornerRadius: 16)
+								.foregroundStyle(.thinMaterial)
+						}
+						Spacer()
+					}
+					
 				}
-				.padding()
-				.background {
-					RoundedRectangle(cornerRadius: 16)
-						.foregroundStyle(.thinMaterial)
-				}
-				Spacer()
 			}
+			.padding()
 		}
 		
 		

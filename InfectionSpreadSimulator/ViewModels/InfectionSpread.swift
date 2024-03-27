@@ -11,9 +11,12 @@ import Observation
 @Observable
 class InfectionSpread {
 	
+	//MARK: - properties
+	
 	var people: [Person]
-	var infectedPeople: [Person] = []
-		
+	var infectedPeopleActive = Set<Person>()
+	var infectedPeople = [Person]()
+	
 	let infectionFactor: Int // >= infect count
 	let infectionFrequency: Int // timer
 	
@@ -25,106 +28,84 @@ class InfectionSpread {
 	
 	var timer: Timer?
 	
+	//MARK: - Init
+	
 	init(peopleNumber: Int, infectionFactor: Int, infectionFrequency: Int) {
-		self.people = Self.createPeople(for: peopleNumber)
+		self.people = Self.createPeople(for: peopleNumber, infectionFactor: infectionFactor)
 		self.infectionFactor = infectionFactor
 		self.infectionFrequency = infectionFrequency
-
+		
+		self.people.forEach({
+			findNeighbors(for: $0)
+		})
 	}
 	
 	func setUpTimer() {
 		self.timer = Timer.scheduledTimer(withTimeInterval: spreadTimeInterval, repeats: true) { _ in
-			if self.people.filter({ !$0.isSick }).isEmpty {
+			if self.infectedPeopleActive.isEmpty {
 				self.timer?.invalidate()
 				print("stop timer")
 			} else {
 				self.spreadInfectionWithIntervalAsync()
 			}
 		}
-		
 	}
+	
+	//MARK: - main logic
 	
 	func infect(_ person: Person) {
-		if let index = people.firstIndex(of: person) {
-				self.people[index].isSick = true
-			
-			print("\ninfected \(people[index])")
-		}
+		
+		self.people[person.index].isSick = true
+		self.infectedPeopleActive.insert(people[person.index])
+		self.infectedPeople.append(people[person.index])
+		print("infected \(self.people[person.index])\n")
+		
 	}
 	
-	func findUninfectedNeighbors(for infectedPerson: Person) {
-		print("\nfindUninfectedNeighbors for \(infectedPerson)")
-		
-		let uninfectedNeighbors = people.filter { person in
-			!person.isSick &&
-			person.position.row >= infectedPerson.position.row - 1 &&
-			person.position.row <= infectedPerson.position.row + 1 &&
-			person.position.col >= infectedPerson.position.col - 1 &&
-			person.position.col <= infectedPerson.position.col + 1
+	func findNeighbors(for person: Person) {
+		let neighborIndices = people.filter { neighbor in
+			neighbor != person &&
+			neighbor.position.row >= person.position.row - 1 &&
+			neighbor.position.row <= person.position.row + 1 &&
+			neighbor.position.col >= person.position.col - 1 &&
+			neighbor.position.col <= person.position.col + 1
 		}
-		print("find \(uninfectedNeighbors.count) neighbors: ")
-
-		if let index = people.firstIndex(of: infectedPerson) {
-			people[index].uninfectedNeighbors = uninfectedNeighbors
-			people[index].uninfectedNeighbors.forEach {
-				print("\($0)")
-			}
-		}
+			.map( { $0.index } )
+		people[person.index].neighborIndices = neighborIndices
 	}
+	
 	
 	func infectRandomNeighbors(for infectedPerson: Person) {
-		print("\ninfectRandomNeighbors for \(infectedPerson)")
-
-		guard let infectedPersonIndex = people.firstIndex(of: infectedPerson) else {
-			print("wrong infectedPersonIndex")
-			return
-		}
-		print("find infectedPersonIndex: \(infectedPersonIndex)")
 		
-		guard people[infectedPersonIndex].infectedCounter < infectionFactor else {
-			print("infectedPerson.infectedCounter >= infectionFactor")
-			return
-		}
+		let maxInfectionsPerWave = min(people[infectedPerson.index].neighborIndices.count, people[infectedPerson.index].infectedReminder)
 		
-		print("infectionFactor: \(infectionFactor) or uninfectedNeighbors.count: \(people[infectedPersonIndex].uninfectedNeighbors.count) - infectedCounter: \(people[infectedPersonIndex].infectedCounter)")
-		
-		let maxInfectionsPerWave = min(infectionFactor, people[infectedPersonIndex].uninfectedNeighbors.count) - people[infectedPersonIndex].infectedCounter
-		
-		print("maxInfectionsPerWave: \(maxInfectionsPerWave)")
 		guard maxInfectionsPerWave > 0 else { return }
-		let infectionsPerWave = Int.random(in: 0...maxInfectionsPerWave)
-		print("infectionsPerWave: \(infectionsPerWave)")
+		let infectionsPerWave = Int.random(in: 1...maxInfectionsPerWave)
 		
-		for _ in 0..<infectionsPerWave {
-			if let randomNeighbor = people[infectedPersonIndex].uninfectedNeighbors.filter({!$0.isSick}).randomElement() { 	//TODO: check double random element
-				infect(randomNeighbor)
-				people[infectedPersonIndex].infectedCounter += 1
+		for _ in 1...infectionsPerWave {
+			if let randomNeighborIndex = people[infectedPerson.index].neighborIndices.randomElement() {
+				print("\(people[infectedPerson.index]) infects:")
+				infect(people[randomNeighborIndex])
+				people[infectedPerson.index].neighborIndices.removeAll(where: { $0 == randomNeighborIndex })
+				people[infectedPerson.index].infectedReminder -= 1
 			}
 		}
-	}
-	
-	func checkInfectedCounter(for infectedPerson: Person) -> Bool {
-		if let infectedPersonIndex = people.firstIndex(of: infectedPerson) {
-			return people[infectedPersonIndex].infectedCounter < infectionFactor
-		}
-		return false
 	}
 	
 	func spreadInfectionWithIntervalAsync() {
-		DispatchQueue.global().async {
-			
-			self.people.filter({ $0.isSick }).forEach({ infectedPerson in
+		DispatchQueue.global().sync {
+			self.infectedPeopleActive.forEach { infectedPerson in
 				
-				print("\nspreadInfectionWithIntervalAsync start for \(infectedPerson)")
-				if self.checkInfectedCounter(for: infectedPerson) {
-					print("\nspreadInfectionWithIntervalAsync performs for \(infectedPerson)")
-					
-					self.findUninfectedNeighbors(for: infectedPerson)
+				if self.people[infectedPerson.index].infectedReminder > 0 {
 					self.infectRandomNeighbors(for: infectedPerson)
 					
+				} else {
+					self.infectedPeopleActive.remove(infectedPerson)
+					print("\(infectedPerson) dont have infection potencial \(infectedPerson.infectedReminder)\n")
+
 				}
 				
-			})
+			}
 		}
 	}
 }
@@ -153,15 +134,18 @@ extension InfectionSpread {
 		return (rows, cols)
 	}
 	
-	static func createPeople(for peopleCount: Int) -> [Person] {
+	static func createPeople(for peopleCount: Int, infectionFactor: Int) -> [Person] {
 		var people = [Person]()
 		let (_, cols) = getGridLimits(for: peopleCount)
 		for index in 0..<peopleCount {
-			people.append(Person(index: index,position: (
-				index / cols,
-				index % cols
-			)))
+			people.append(Person(index: index,
+								 infectedReminder: infectionFactor, 
+								 position: PersonPosition(
+									row: index / cols, 
+									col: index % cols)))
 		}
 		return people
 	}
+	
+	
 }

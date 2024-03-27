@@ -7,16 +7,15 @@
 
 import Foundation
 
-struct Person: Identifiable, CustomDebugStringConvertible, Equatable {
-	
-	
+struct Person: Identifiable, CustomDebugStringConvertible, Equatable, Hashable {
 	
 	var id = UUID()
 	var index: Int
 	var isSick = false
-	var uninfectedNeighbors: [Person] = []
-	var infectedCounter = 0
-	var position: (row: Int, col: Int)
+	var neighbors: [Person] = []
+	var neighborIndices: [Int] = []
+	var infectedReminder: Int
+	var position: PersonPosition
 	
 	var debugDescription: String {
 		"PERSON index: \(index), position: \(position)"
@@ -25,5 +24,9 @@ struct Person: Identifiable, CustomDebugStringConvertible, Equatable {
 	static func == (lhs: Person, rhs: Person) -> Bool {
 		lhs.id == rhs.id
 	}
+}
 
+struct PersonPosition: Hashable {
+	var row: Int
+	var col: Int
 }
